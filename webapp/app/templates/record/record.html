@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+  <h1>{% block title %}Schedule A Recording{% endblock %}</h1>
+
+{% block content %}
+  <form method="post">
+    
+    <label for="start_time">Start of Recording:</label>
+    <p>yyyy:mm:dd:hh:ss <input type = "text" name = "start_time" required /></p>
+
+
+    <label for="duration">Duration of Recording:</label>
+    <p>hrs:mins:secs <input type = "text" name = "duration" id="duration" required/></p>
+
+    <label for="file_name">Name of Recording:</label>
+    <p> <input type = "text" name = "file_name" id="file_name" required/></p>
+
+
+    <label for="station-select">Choose a Station:</label>
+    <select name="station" id="station-select"> 
+    	<option value = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_p"> Radio 1</option>
+    	<option value = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio2_mf_p"> Radio 2</option>
+    	<option value = "http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio4fm_mf_p"> Radio 4</option>
+        <option value = "https://nprdmp-live01-mp3.akacast.akamaistream.net/7/998/364916/v1/npr.akacast.akamaistream.net/nprdmp_live01_mp3"> NPR</option>
+
+    </select>
+
+
+    <input type="submit" value="Schedule Recording">
+  </form>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Recordings{% endblock %}</h1>
+  
+  <a class="action" href="{{ url_for('record') }}">New Recording</a>
+  
+{% endblock %}
+
+{% block content %}
+
+  {% for recording in recordings %}
+    <article class="recording">
+      <header>
+        <div>
+          <h1>{{ recording['name'] }}</h1>
+          <a href="{{ url_for('download', filename = recording['name']) }}">
+          <button>Download</button>
+          </a>
+          <div class="duration">Duration = {{ recording['track_length']}}</div>
+          <div style="width: 300px; margin: 0 auto;">
+          <div class="tag1">#Radio name placeholder</div>
+          </div>
+        </div>
+
+    </article>
+    {% if not loop.last %}
+      <hr>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+
