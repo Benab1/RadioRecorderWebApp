@@ -14,7 +14,6 @@ from .models import Account, Recordings
 from schedpack import my_timer
 from datetime import datetime
 
-
 from werkzeug.security import generate_password_hash, check_password_hash
 
 login_manager = LoginManager()
@@ -33,7 +32,8 @@ def index():
 @app.route('/home', methods=('GET', 'POST'))
 @login_required
 def home():
-
+    # Retrieves user's relavent recording information 
+    # to display a list of recordings in the library view.
     recordings = Recordings.query.filter(Recordings.user_id == current_user.id).all()
 
     return render_template('record/index.html', recordings = recordings)
@@ -41,9 +41,10 @@ def home():
 
 @app.route('/register', methods=('GET', 'POST'))
 def register():
-    """Register a new user.
-    Validates that the username is not already taken. Hashes the
-    password for security.
+    """
+    Register a new user.
+    Validates that the username is not already taken.
+    Hashes the password for security.
     """
     if request.method == 'POST':
         username = request.form['username']
@@ -60,11 +61,10 @@ def register():
             error = f'User {username} is already  registered.'
 
         if error is None:
-            # the name is available, store it in the database and go to
-            # the login page
+            # If the name is available, store user details in the database.
             newuser = Account(
                 user=username,
-                # hash the password so cannot be accessed by anyone else
+                # hash the password for secure storage.
                 password=generate_password_hash(password)
                 )
             
@@ -81,7 +81,7 @@ def register():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
-    """Log in a registered user by adding the user id to the session."""
+    #Log in a registered user by adding the user id to the session.
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -89,10 +89,10 @@ def login():
         error = None
         user = Account.query.filter_by(user=username).first()
 
-        if user:  # if user exists
-            # checks password with database
+        if user:
+            # If user exists checks password with database and log in.
             if (check_password_hash(user.password, password)):
-                login_user(user)  # logs in
+                login_user(user)
                 flash("Logged in successfully")
                 return redirect(url_for('home'))
             else:
@@ -126,9 +126,11 @@ def logout():
 def record():
     if request.method == 'POST':
         
+        # Set the instream as the URL source associated with station selected by the user.
         instream = request.form.get('station')
 
-
+        # Extracting the the recording start time input and separating it into the appropriate
+        # form for the 
         start_time = request.form.get('start_time')
         time_arr = re.split('[-:]',start_time)
 
@@ -142,11 +144,12 @@ def record():
         file_name = request.form.get('file_name')
         duration  = request.form.get('duration')
 
-
         my_timer.runtest(datetime(year,month,day,hour,minutes,seconds),duration,instream, file_name)
 
         error = None
 
+        # Provide checks and prompts for data input input fields.
+        # Commit the recording information to the database.
         if not file_name:
             error = 'File name is required.'
 
@@ -156,7 +159,6 @@ def record():
         if error is not None:
             flash(error)
         else:
-
             newrecording = Recordings(
                 user_id=current_user.id,
                 name=file_name,
@@ -170,7 +172,7 @@ def record():
     return render_template('record/record.html')
 
 
-@app.route('/download/<filename>')#, methods=('POST',))
+@app.route('/download/<filename>')
 def download(filename):
     flash(f'{filename}.mp3')
     return send_file(f'/home/ben/Documents/Dev/RadioRecorder - master/webapp/files/{filename}.mp3')
